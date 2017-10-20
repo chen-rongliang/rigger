@@ -45,8 +45,8 @@ module.exports = function(rigger) {
       if (value == 'online') {
         // next() 没有参数，则继续往下执行
         // next('名字') 只有一个参数，则跳到当前链条的对应问题
-        // next('名字', 是否回到当前链条?) 两个参数，则跳到新的链条，须指定，执行完新的链条后，是否需要回到当前链条
-        // next('名字.key', 是否回到当前链条?) 两个参数
+        // next('名字', 是否回到当前链条?) 两个参数，代表到新的链条执行问题，则跳到新的链条
+        // next('名字.key', 是否回到当前链条?) 两个参数，代表到新的链条执行问题，如果名字带有 “.”，则跳到新链条的“key”问题
         next('online', true);
       }
       next();
@@ -66,9 +66,25 @@ module.exports = function(rigger) {
 };
 ```
 
+meta.js 最终生成此对象:
+```text
+{
+  projectName: xxx,
+  runtime: online,
+
+  // 对应是 rigger.flow('online')
+  online: {
+    needJQuery: true
+  }
+}
+```
+
 2) 构建设计
 ```javascript
 module.exports = function(rt, data) {
+  // data 等于 meta.js 生成的对象
+  // rt.find().compile() 方法，已经内置了 data 属性
+
   const fs = rt.fs;
 
   rt.find('./package.json')
@@ -91,6 +107,7 @@ module.exports = function(rt, data) {
 ```
 cbg-rigger
   --template,-t [name 名字，如果是路径的话，则使用此路径下的模板，如果非路径，则从配置中查找模板]
+  --output,-o [dirname 目录名字，模板将要输出的目录]
   --add,-a [name 名字，全局添加模板，将当前目录的所有文件，作为模板的内容]
   --remove,-a [name 名字，全局移除模板]
   --exist,-e [name 名字，判断模板是否存在]

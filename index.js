@@ -147,20 +147,3 @@ exports.exist = function(key) {
 exports.browser = function() {
   // 打开浏览器，查看所有模板的简介
 };
-
-
-// co(function*() {
-//   const rigger = new Rigger();
-//   const metaFn = require('./test/meta');
-//   yield rigger.ask(metaFn);
-//   process.stdin.pause();
-//   console.log(JSON.stringify(rigger.result, null, 2));
-//
-//   console.log(chalk.green('准备构建项目..'));
-//   const buildFn = require('./test/build');
-//   yield rigger.build(buildFn, path.resolve(__dirname, './test/src'), path.resolve(__dirname, './test-dest'));
-//
-//   console.log(chalk.green('构建完成~'));
-// }).catch(e => {
-//   console.error(chalk.red(e ? e.stack || e : e));
-// });
