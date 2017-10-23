@@ -8,6 +8,29 @@
 rigger --template=wap --output=./app
 ```
 
+# 命令运行
+提供以下命令
+```
+cbg-rigger
+  --template,-t [name 名字，如果是路径的话，则使用此路径下的模板，如果非路径，则从配置中查找模板]
+  --output,-o [dirname 目录名字，模板将要输出的目录]
+  --add,-a [name 名字，全局添加模板，将当前目录的所有文件，作为模板的内容]
+  --remove,-a [name 名字，全局移除模板]
+  --exist,-e [name 名字，判断模板是否存在]
+  --browser 打开浏览器，查看当前所有模板
+```
+
+# node运行
+在 node.js 中，提供以下方法:
+代码调用:
+```javascript
+const Rigger = require('cbg-rigger');
+Rigger.template('模板名字|绝对路径', targetDir);
+Rigger.add('模板名字', templateDir);
+Rigger.remove('模板名字');
+```
+
+
 # 模板目录结构
 
 脚手架使用 `rigger` 时，有特定的目录结构:
@@ -125,11 +148,42 @@ module.exports = function*(riggerTool, data) {
 };
 ```
 
+### riggerTool.find(String|Array)
+此方法是找出 `src` 目录下，所有满足条件的资源，`find` 方法，对 `glob` 表达式进行了简单的拓展:
+* `*`匹配0或多个除了`/`以外的字符
+* `?` 匹配单个除了`/`以外的字符
+* `**` 匹配多个字符包括`/`
+* `{}` 可以让多个规则用 , 逗号分隔，起到`或者`的作用
+* `!` 出现在规则的开头，表示取反。即匹配不命中后面规则的文件
+需要注意的是，文件路径都是以 `/` 开头的，所以编写规则时，请尽量严格的以 / 开头。
+当设置规则时，没有严格的以 `/` 开头，比如 `a.js`, 它匹配的是所有目录下面的 `a.js`。
+
+### riggerTool.find(xxx).rename(fr, to)
+必须跟在 `find()` 后调用，把 `fr` 命中的所有文件，名字更改为 `to`，这里的 `glob` 表达式支持类似正则的数组捕获。
+
+如:
+```javascript
+riggerTool.find('**.js')
+  .rename('(**)/(*.js)', '$1/test/$2')
+  .place();
+```
+
+### riggerTool.find(xxx).compile(extraData, opts = { charset: 'utf8' })
+对文本类的文件，使用 `nunjucks` 模板，进行编译。
+
+* `extraData` 传入`nunjucks`模板的额外数据，默认是 `meta.js` 传入的问题结果
+* `opts` 编译的参数，{ `charset`: 当前编译文件的编码，默认是 `utf8` }
+
+注: nunjucks模板资料，[查看这里](http://mozilla.github.io/nunjucks/templating.html)
+
+### riggerTool.find(xxx).place(subDir, opts = { flatten: false });
+查询的文件，放置到编译目录下的那个子目录。只有调用此方法，才会真正编译、放置文件。
+所有 `find` 出来的文件，默认情况下，会保持与 `src` 目录放置的相同路径。
+
+* `subDir` 子目录的相对路径，默认是 `./`
+* `opts` 放置参数，{ `flatten`: 匹配的文件，是否都忽略本身路径，放置在同一个目录，默认是 `false` }
+
+
 ## src目录
 
-脚手架模板的所有文件~
-
-
-# 命令运行
-
-# node运行
+脚手架模板的所有文件，请按项目需求，自己组织
