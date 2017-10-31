@@ -1,0 +1,31 @@
+body {
+  font-size: 14px;
+}
+#main {
+  line-height: 1;
+}
+#main .form-group {
+  padding: 0 8px;
+}
+#main .header {
+  font-size: 18px;
+  font-weight: bold;
+}
+#main .labelList {
+  padding-top: 6px;
+}
+#main .labelList .label {
+  display: inline-block;
+  padding: .4em .6em;
+  margin-right: .5em;
+}
+#main .description {
+  padding-top: 8px;
+}
+#main .description pre {
+  margin: 0;
+}
+#main .dirname,
+#main .cmd {
+  padding-top: 6px;
+}

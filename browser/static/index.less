@@ -1,0 +1,19 @@
+// out: ./index.css, compress: false, sourceMap: false, autoprefixer: > 50%;
+
+body { font-size: 14px; }
+
+#main {
+  @top: 6px;
+  line-height: 1;
+    .form-group { padding: 0 8px; }
+    .header { font-size: 18px; font-weight: bold; }
+    .labelList {
+      padding-top: @top;
+        .label { display: inline-block; padding: .4em .6em; margin-right: .5em; }
+    }
+    .description {
+      padding-top: @top + 2px;
+        pre { margin: 0; }
+    }
+    .dirname, .cmd { padding-top: @top; }
+}

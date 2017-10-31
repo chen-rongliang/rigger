@@ -1,14 +1,17 @@
 {
-  "name": "rigger",
+  "name": "lfp-rigger",
   "version": "1.0.0",
-  "description": "藏宝阁前端脚手架",
+  "description": "前端脚手架",
   "main": "index.js",
   "scripts": {
     "main": "node index.js",
     "install": "node ./bin/prepare.js"
   },
+  "bin": {
+    "lfp-rigger": "bin/index.js"
+  },
   "keywords": [
-    "藏宝阁",
+    "脚手架",
     "自动"
   ],
   "author": "da宗熊",
@@ -17,6 +20,8 @@
     "chalk": "^1.1.3",
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
+    "commander": "^2.11.0",
+    "express": "^4.16.2",
     "fs-extra": "^4.0.2",
     "iconv-lite": "^0.4.19",
     "minimatch": "^3.0.4",

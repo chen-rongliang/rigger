@@ -1,0 +1,23 @@
+{% if wap and wap.fixChinese %}
+body { font-family: -apple-system-font, sans-serif; }
+{% endif %}
+{% if wap and wap.scaleType == '40px' %}
+html {
+  font-size: 20px;
+}
+@media screen and (min-width:375px) {
+  html {
+    font-size: 20px;
+  }
+}
+@media screen and (min-width:450px) {
+  html {
+    font-size: 24px;
+  }
+}
+@media screen and (min-width:525px) {
+  html {
+    font-size: 28px;
+  }
+}
+{% endif %}

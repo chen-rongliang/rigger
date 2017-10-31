@@ -4,7 +4,15 @@
 
 1) 问题设计:
 ```javascript
-module.exports = function(rigger) {
+// 此脚手架的关键词，用于预览的搜索
+exports.keywords = [
+  '移动端',
+  'h5',
+  'jquery',
+  'vue'
+];
+
+exports.question = function*(rigger) {
   rigger.add('projectName', {
     required: false, // 是否必填字段
     default: 'test',

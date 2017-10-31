@@ -12,12 +12,14 @@ rigger --template=wap --output=./app
 提供以下命令
 ```
 cbg-rigger
-  --template,-t [name 名字，如果是路径的话，则使用此路径下的模板，如果非路径，则从配置中查找模板]
-  --output,-o [dirname 目录名字，模板将要输出的目录]
-  --add,-a [name 名字，全局添加模板，将当前目录的所有文件，作为模板的内容]
-  --remove,-a [name 名字，全局移除模板]
-  --exist,-e [name 名字，判断模板是否存在]
-  --browser 打开浏览器，查看当前所有模板
+  -t, --template <name>, 当前目录安装指定name的模板，如果是路径的话，则使用此路径下的模板，如果非路径，则从配置中查找模板
+  -o, --output [dirname], 模板编译后的放置目录，默认是 process.cwd()
+  -a, --add <name>, 将当前命令运行的目录，添加到全局配置中
+  --addDir <dirname>, --add命令指定的目录
+  -r, --remove <name>, 删除全局脚手架
+  -e, --exist <name>, 查询全局脚手架，是否存在
+  --browser, 打开浏览器，查看现在所有的全局脚手架
+  --port <port>, browser服务的端口号，默认5354
 ```
 
 # node运行
@@ -25,9 +27,16 @@ cbg-rigger
 代码调用:
 ```javascript
 const Rigger = require('cbg-rigger');
+// 创建模板
 Rigger.template('模板名字|绝对路径', targetDir);
+
+// 添加、删除模板，模板是否存在
 Rigger.add('模板名字', templateDir);
 Rigger.remove('模板名字');
+Rigger.exist('模板名字');
+
+// 查看所有模板，占用端口 5354
+Rigger.browser();
 ```
 
 
@@ -37,8 +46,7 @@ Rigger.remove('模板名字');
 
 ```text
 -- templateName [模板名字]
----- meta.js    [问题配置]
----- build.js   [模板编译]
+---- meta.js    [脚手架配置]
 ---- src        [模板源码目录]
 ```
 
@@ -49,7 +57,18 @@ Rigger.remove('模板名字');
 问题配置，必须返回一个函数:
 ```javascript
 // meta.js
-module.exports = function(rigger) {
+
+// 预览时的关键词
+exports.keywords = [
+  '关键词1',
+  '关键词2'
+];
+
+// 预览时的描述
+exports.description = `脚手架简短描述，可使用 html 标志`;
+
+// 配置问题
+exports.question = function*(rigger) {
   rigger.add('projectName', {
     required: false,
     default: 'test',
@@ -57,9 +76,15 @@ module.exports = function(rigger) {
     message: '项目名字【默认为test】:',
   });
 };
+
+// 如何构建
+exports.build = function*(riggerTool, data) {
+  // data == { projectName: 'test' }
+  // riggerTool = { fs, data, srcDir, targetDir, find, rename }
+};
 ```
 
-`exports` 中的 `rigger` 对象，有 `add` 和 `flow` 两个方法:
+`exports.question` 中的 `rigger` 对象，有 `add` 和 `flow` 两个方法:
 
 ### rigger.add(key, opts) 添加新的问题
 `key`值作为问题的唯一ID，将会被透传到 `build.js` 中使用，
@@ -130,14 +155,15 @@ jquery.add('auto', {
 注意: flow 生成的配置，将会封装为类似这样的格式: `{ jquery: { comfirm: true, auto: true } }`
 
 
-## build.js
+### exports.build = function() {}
 
-详细例子，可见 `./test/build.js` 或者是 `./design.md`；
+详细例子，可见 `./test/meta.js` 或者是 `./design.md`；
 
-`meta.js`询问用户后，将返回一个配置对象，并传入到 `build.js` 中。`build.js`必须返回一个函数:
+`exports.question`询问用户后，将返回一个配置对象，并传入到 `exports.build` 中:
 
 ```javascript
-module.exports = function*(riggerTool, data) {
+// meta.js
+exports.build = function*(riggerTool, data) {
   // data = meta.js生成的配置对象
   // const fs = riggerTool.fs; // fs-extra 的快捷方式
 

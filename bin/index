@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+
+const commander = require('commander');
+const chalk = require('chalk');
+const pkg = require('../package.json');
+
+commander
+  .option('-t, --template <name>', '当前目录安装指定name的模板')
+  .option('-o, --output [dirname]', '模板编译后的放置目录，默认是 process.cwd()', process.cwd())
+  .option('-a, --add <name>', '将当前命令运行的目录，添加到全局配置中')
+  .option('--addDir <dirname>', '--add命令指定的目录')
+  .option('-r, --remove <name>', '删除全局脚手架')
+  .option('-e, --exist <name>', '查询全局脚手架，是否存在')
+  .option('--browser', '打开浏览器，查看现在所有的全局脚手架')
+  .option('--port <port>', 'browser服务的端口号，默认5354', 5354)
+  .version(pkg.version || '0.0.0');
+
+commander.on('--help', function() {
+  console.log('\n  Examples:');
+  console.log('    $ rigger --template=test');
+});
+
+commander.parse(process.argv);
+
+const Rigger = require('../index');
+const cwd = process.cwd();
+
+if (commander.template) {
+  Rigger.template(commander.template, commander.output || cwd);
+} else if (commander.add) {
+  Rigger.add(commander.add, commander.addDir || cwd);
+  console.log(chalk.green('添加成功'));
+} else if (commander.remove) {
+  Rigger.remove(commander.remove);
+  console.log(chalk.green('删除成功'));
+} else if (commander.exist) {
+  console.log(Rigger.exist(commander.exist) ? 'exist' : 'not exist');
+} else if (commander.browser) {
+  Rigger.browser(commander.port);
+}

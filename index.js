@@ -7,34 +7,55 @@ const Rigger = require('./lib/rigger');
 const coPrompt = require('co-prompt');
 
 const FILE_NAME_DATA = 'template.data';
-// 读取配置
+
+
+/**
+ * 读取配置文件 template.data
+ * @return {[{dir:String, key:String, keywords:Array, description:String}]}
+*/
 function readConf() {
   const content = fs.readFileSync(path.resolve(__dirname, `./${FILE_NAME_DATA}`)).toString();
   let result = [];
   try {
-    // result = [ {key: 'xxx', dir: 'E://test/xxx' } ]
+    // result = [ {key: 'xxx', dir: 'E://test/xxx', keywords: [], description: '' } ]
     result = JSON.parse(content || '[]');
   } catch (e) {
     console.log(chalk.red('读取配置文件出错，配置将自动清空'));
   }
   return result;
 }
-// 重写配置
-function writeConf(list) {
-  fs.writeFileSync(path.resolve(__dirname, `./${FILE_NAME_DATA}`), JSON.stringify(list, null, 1));
-}
+exports.readConf = readConf;
 
-// 检查模板目录的必要文件
+
+/**
+ * 重写配置
+ * @param {Array} list 配置列表
+*/
+function writeConf(list) {
+  fs.writeFileSync(path.resolve(__dirname, `./${FILE_NAME_DATA}`), JSON.stringify(list));
+}
+exports.writeConf = writeConf;
+
+
+/**
+ * 检查模板目录的必要文件
+ * @param {String} dir 需要检测的目录
+ * @return [Boolean]
+*/
 function hasNecessaryFiles(dir) {
   const filepathSrc = path.join(dir, './src');
   const filepathMeta = path.join(dir, './meta.js');
-  const filepathBuild = path.join(dir, './build.js');
 
   return fs.existsSync(filepathSrc) &&
-    fs.existsSync(filepathMeta) &&
-    fs.existsSync(filepathBuild);
+    fs.existsSync(filepathMeta);
 }
 
+
+/**
+ * 启动脚手架
+ * @param {String} key 脚手架的key值，或者是路径
+ * @param {String} targetDir 脚手架编译后，放置的目录
+*/
 exports.template = function(key, targetDir) {
   // 目标目录，默认为: process.cwd()
   // 1. key = 绝对路径，则使用该路径作为模板
@@ -66,7 +87,6 @@ exports.template = function(key, targetDir) {
   }
 
   const filepathMeta = path.join(dir, './meta.js');
-  const filepathBuild = path.join(dir, './build.js');
 
 
   // 默认编译目录，是当前命令的运行目录
@@ -76,14 +96,16 @@ exports.template = function(key, targetDir) {
 
   return co(function*() {
     const rigger = new Rigger();
-    const metaFn = require(filepathMeta);
+
+    const meta = require(filepathMeta);
+    const metaFn = meta.question || function() {};
     yield rigger.ask(metaFn);
     process.stdin.pause();
     console.log(chalk.green('所有参数如下:'));
     console.log(JSON.stringify(rigger.result, null, 2));
 
     console.log(chalk.green('准备构建项目..'));
-    const buildFn = require(filepathBuild);
+    const buildFn = meta.build || function() {};
     yield rigger.build(buildFn, srcDir, targetDir);
     console.log(chalk.green('构建完成~'));
   }).catch(e => {
@@ -91,29 +113,48 @@ exports.template = function(key, targetDir) {
   });
 };
 
+
+/**
+ * 添加脚手架到全局配置中
+ * @param {String} key 脚手架的唯一id
+ * @param {String} templateDir 脚手架放置在哪个目录下
+*/
 exports.add = function(key, templateDir) {
   // 检查目录下，是否存在 meta.js 和 build.js
   const dir = path.resolve(process.cwd(), templateDir);
 
   // 检查
   const filepathMeta = path.join(dir, './meta.js');
-  const filepathBuild = path.join(dir, './build.js');
 
   if (hasNecessaryFiles(dir) == false) {
     throw new Error(`目录:${dir} 缺少模板的必要文件，具体请看文档`);
   }
 
+  const meta = require(filepathMeta);
+  const keywords = meta.keywords || [];
+  const description = meta.description || '';
+ 
+
   const list = readConf();
   const data = list.find(item => item.key == key);
+
+  // 已经存在配置，则覆盖以前的配置，否则，在最后插入一份新的配置
   if (data) {
     data.dir = dir;
+    data.keywords = keywords;
+    data.description = description;
   } else {
-    list.push({ key, dir })
+    list.push({ key, dir, keywords, description })
   }
 
   writeConf(list);
 };
 
+
+/**
+ * 移除全局脚手架
+ * @param {String} key 脚手架唯一id
+*/
 exports.remove = function(key) {
   // 从 template.data 中，删模板
   const list = readConf();
@@ -134,6 +175,12 @@ exports.remove = function(key) {
   }
 };
 
+
+/**
+ * 脚手架是否在全局配置中
+ * @param {String} key 脚手架唯一id
+ * @return [Boolean]
+*/
 exports.exist = function(key) {
   const list = readConf();
   const data = list.find(item => item.key == key);
@@ -144,6 +191,11 @@ exports.exist = function(key) {
   return false;
 };
 
-exports.browser = function() {
+
+/**
+ * 预览现有的全局脚手架信息，将自动打开浏览器
+*/
+exports.browser = function(port) {
   // 打开浏览器，查看所有模板的简介
+  require('./lib/browser').open(port);
 };

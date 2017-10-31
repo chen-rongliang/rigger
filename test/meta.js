@@ -1,6 +1,17 @@
 'use strict';
 
-module.exports = function*(rigger) {
+exports.keywords = [
+  '移动端',
+  'h5',
+  'jquery',
+  'vue'
+];
+
+exports.description = `
+脚手架简单的描述，难道还想很长很长的吗？不可能啦~
+`;
+
+exports.question = function*(rigger) {
   const add = rigger.add.bind(rigger);
 
   add('projectName', {
@@ -43,4 +54,32 @@ module.exports = function*(rigger) {
     type: 'confirm',
     message: '是否安装 autoComplete'
   });
+};
+
+exports.build = function*(rigger, opts) {
+  rigger.find('**.css')
+    .compile({ color: '#f00' })
+    .place();
+
+  rigger.find('*.html')
+    .compile()
+    .place();
+
+  rigger.find('index.html')
+    .rename('index2.html')
+    .compile()
+    .place();
+
+  rigger.find('**.js')
+    .rename('(**)/jquery.js', '$1/jquery.min.js')
+    .compile()
+    .place();
+
+  rigger.rename('index.html', 'haha.html')
+    .compile()
+    .place();
+
+  rigger.find('js/**.js')
+    .compile()
+    .place('./js-test', { flatten: true });
 };

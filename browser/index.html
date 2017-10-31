@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rigger 预览</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/index.css">
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+  <script src="/static/lib/jquery.js"></script>
+  <script src="/static/lib/angular.js"></script>
+  <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body ng-app="app">
+  <h1>Rigger列表</h1>
+  <hr>
+  <div id="main" ng-controller="dataList">
+    <div class="form-group">
+      <input type="text" class="form-control" placeholder="进行过滤" ng-model="value">
+    </div>
+    <table class="table table-bordered table-hover table-striped" ng-if="list.length">
+      <tr ng-repeat="item in list | filter:value">
+        <td>
+          <div class="header">
+            <i class="glyphicon glyphicon-flag" title="老司机，快上车"></i>
+            {{ item.key }}
+          </div>
+          <div class="labelList" ng-if="item.keywords && item.keywords.length">
+            <span class="label" ng-class="getLabelCls($index)" ng-repeat="kw in item.keywords">
+              {{ kw }}
+            </span>
+          </div>
+          <div class="description" ng-if="!item.description">
+            <pre class="text-primary">这个人很赖，什么都没有留下</pre>
+          </div>
+          <div class="description" ng-if="item.description">
+            <pre class="text-primary">{{ item.description.trim() }}</pre>
+          </div>
+          <div class="dirname">
+            目录: {{ item.dir }}
+          </div>
+          <div class="cmd text-success">
+            命令: <kbd>rigger template {{ item.key }}</kbd>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+<script src="/static/index.js"></script>
+</body>
+</html>
