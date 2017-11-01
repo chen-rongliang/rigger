@@ -24,6 +24,7 @@
     "express": "^4.16.2",
     "fs-extra": "^4.0.2",
     "iconv-lite": "^0.4.19",
+    "js-beautify": "^1.7.4",
     "minimatch": "^3.0.4",
     "nunjucks": "^3.0.1"
   }
