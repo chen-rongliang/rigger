@@ -1,6 +1,6 @@
 {
   "name": "lfp-rigger",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "前端脚手架",
   "main": "index.js",
   "scripts": {
@@ -8,12 +8,16 @@
     "install": "node ./bin/prepare.js"
   },
   "bin": {
-    "lfp-rigger": "bin/index.js"
+    "lfp-rigger": "bin/index"
   },
   "keywords": [
     "脚手架",
     "自动"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linfenpan/rigger.git"
+  },
   "author": "da宗熊",
   "license": "MIT",
   "dependencies": {
