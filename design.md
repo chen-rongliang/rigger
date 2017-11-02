@@ -54,7 +54,7 @@ exports.question = function*(rigger) {
         // next('名字') 只有一个参数，则跳到当前链条的对应问题
         // next('名字', 是否回到当前链条?) 两个参数，代表到新的链条执行问题，则跳到新的链条
         // next('名字.key', 是否回到当前链条?) 两个参数，代表到新的链条执行问题，如果名字带有 “.”，则跳到新链条的“key”问题
-        next('online', true);
+        return next('online', true);
       }
       next();
     }
