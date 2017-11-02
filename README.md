@@ -5,13 +5,13 @@
 
 想象一下，只需一条命令，就完成项目的初始化，那是何等的美妙:
 ```
-rigger --template=wap --output=./app
+lfp-rigger --template=wap --output=./app
 ```
 
 # 命令运行
 提供以下命令
 ```
-cbg-rigger
+lfp-rigger
   -t, --template <name>, 当前目录安装指定name的模板，如果是路径的话，则使用此路径下的模板，如果非路径，则从配置中查找模板
   -o, --output [dirname], 模板编译后的放置目录，默认是 process.cwd()
   -a, --add <name>, 将当前命令运行的目录，添加到全局配置中
@@ -26,7 +26,7 @@ cbg-rigger
 在 node.js 中，提供以下方法:
 代码调用:
 ```javascript
-const Rigger = require('cbg-rigger');
+const Rigger = require('lfp-rigger');
 // 创建模板
 Rigger.template('模板名字|绝对路径', targetDir);
 
@@ -42,7 +42,7 @@ Rigger.browser();
 
 # 模板目录结构
 
-脚手架使用 `rigger` 时，有特定的目录结构:
+脚手架使用 `lfp-rigger` 时，有特定的目录结构:
 
 ```text
 -- templateName [模板名字]
